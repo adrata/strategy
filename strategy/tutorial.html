@@ -105,12 +105,6 @@
             margin-bottom: 16px;
         }
         
-        .step-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-        
         .step-content {
             font-size: 16px;
             color: var(--text-muted);
@@ -136,6 +130,12 @@
             font-family: 'SF Mono', Monaco, monospace;
             font-size: 13px;
             font-weight: 500;
+        }
+        .kbd-large {
+            font-size: 24px;
+            padding: 12px 20px;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
         }
         
         .try-it {
@@ -234,6 +234,7 @@
             border: none;
             font-family: inherit;
             transition: all 0.15s ease;
+            text-decoration: none;
         }
         .btn-primary {
             background: var(--accent);
@@ -275,34 +276,33 @@
             margin-bottom: 32px;
         }
         
-        .tips-list {
-            text-align: left;
-            list-style: none;
-            margin: 24px 0;
-        }
-        .tips-list li {
+        .key-hero {
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .tips-list li:last-child { border-bottom: none; }
-        .tips-list .tip-icon {
-            width: 24px;
-            height: 24px;
-            background: rgba(230,81,0,0.1);
-            border-radius: 6px;
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            gap: 24px;
+            padding: 40px 0;
+            text-align: center;
         }
-        .tips-list .tip-icon svg {
-            width: 14px;
-            height: 14px;
-            stroke: var(--accent);
+        .key-hero .kbd-large { margin-bottom: 8px; }
+        .key-description {
+            font-size: 18px;
+            color: var(--text);
+            font-weight: 500;
         }
+        .key-hint {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .success-msg {
+            color: var(--accent);
+            font-size: 14px;
+            margin-top: 16px;
+            display: none;
+            text-align: center;
+        }
+        .success-msg.show { display: block; }
     </style>
 </head>
 <body>
@@ -313,62 +313,55 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
             Back to Search
         </a>
-        <div class="progress">
-            <div class="progress-dot active" data-step="1"></div>
-            <div class="progress-dot" data-step="2"></div>
-            <div class="progress-dot" data-step="3"></div>
-            <div class="progress-dot" data-step="4"></div>
-            <div class="progress-dot" data-step="5"></div>
+        <div class="progress" id="progressDots">
+            <!-- Dots added dynamically -->
         </div>
     </div>
     
-    <!-- Step 1: Introduction -->
+    <!-- Step 1: Welcome -->
     <div class="step active" data-step="1">
-        <div class="step-number">Step 1 of 5</div>
-        <h1>Welcome to Adrata Search</h1>
-        <p class="subtitle">Learn how to find any document in seconds</p>
+        <div class="step-number">Getting Started</div>
+        <h1>Find anything in seconds</h1>
+        <p class="subtitle">Adrata Search is your command center for strategy docs</p>
         
         <div class="step-content">
-            <p>Adrata Search is your command center for strategy documents, playbooks, and guides. Let's walk through the key features.</p>
+            <p>Just type what you're looking for. Results appear instantly. No folders, no clicking around.</p>
         </div>
         
         <div class="demo-box">
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 12px;">You'll learn these shortcuts:</p>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <span><span class="kbd">/</span> search</span>
-                <span><span class="kbd">1</span>-<span class="kbd">6</span> quick open</span>
-                <span><span class="kbd">←↑↓→</span> navigate</span>
-                <span><span class="kbd">↵</span> open</span>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Try typing something:</p>
+            <div class="demo-search" id="demoSearch1">
+                <input type="text" placeholder="demand, archetypes, ai agents..." id="demoInput1">
             </div>
+            <p class="success-msg" id="success1">That's it. You're ready to search.</p>
         </div>
         
         <div class="action-row">
+            <a href="search.html" class="btn btn-secondary">Start Searching</a>
             <button class="btn btn-primary" onclick="nextStep()">
-                Get Started
+                Become a Power User
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
             </button>
         </div>
     </div>
     
-    <!-- Step 2: Focus Search -->
+    <!-- Step 2: Bundles -->
     <div class="step" data-step="2">
-        <div class="step-number">Step 2 of 5</div>
-        <h1>Quick Focus</h1>
-        <p class="subtitle">Jump straight to the search bar from anywhere</p>
+        <div class="step-number">Pro Tip</div>
+        <h1>Smart Bundles</h1>
+        <p class="subtitle">Search clusters related documents together</p>
         
         <div class="step-content">
-            <p>Press <span class="kbd">/</span> from anywhere on the page to instantly focus the search bar. No need to click.</p>
+            <p>Some searches pull up bundles of related docs. Perfect for uploading context to AI agents or getting the full picture.</p>
         </div>
         
         <div class="demo-box">
-            <div class="try-it">Try it now</div>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Press the forward slash key on your keyboard:</p>
+            <div class="try-it">Try this search</div>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Type "context-bundle" to get all standards docs:</p>
             <div class="demo-search" id="demoSearch2">
-                <input type="text" placeholder="Search documents..." id="demoInput2">
+                <input type="text" placeholder="context-bundle" id="demoInput2">
             </div>
-            <p id="success2" style="color: var(--accent); font-size: 14px; margin-top: 12px; display: none;">
-                ✓ Nice! The search bar is now focused.
-            </p>
+            <p class="success-msg" id="success2">You found the bundle. 6 docs perfect for AI context.</p>
         </div>
         
         <div class="action-row">
@@ -380,153 +373,227 @@
         </div>
     </div>
     
-    <!-- Step 3: Arrow Navigation -->
+    <!-- Step 3: Done with basics, choice point -->
     <div class="step" data-step="3">
-        <div class="step-number">Step 3 of 5</div>
-        <h1>Keyboard Navigation</h1>
-        <p class="subtitle">Navigate results without touching your mouse</p>
+        <div class="step-number">Basics Complete</div>
+        <h1>You're ready to search</h1>
+        <p class="subtitle">That's everything you need to know</p>
         
         <div class="step-content">
-            <p>Use <span class="kbd">↑↓</span> to move through results, <span class="kbd">←→</span> for browser back/forward. Press <span class="kbd">Enter</span> to open.</p>
+            <p>Type to search, find what you need. But if you want to move even faster, we can teach you the keyboard shortcuts.</p>
         </div>
         
-        <div class="demo-box">
-            <div class="try-it">Try it now</div>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Press arrow keys to navigate:</p>
-            <div class="demo-cards" id="demoCards">
-                <div class="demo-card" data-idx="0">
-                    <span class="badge">1</span>
-                    <div class="demo-card-title">Demand Generation</div>
-                    <div class="demo-card-desc">Strategy document</div>
-                </div>
-                <div class="demo-card" data-idx="1">
-                    <span class="badge">2</span>
-                    <div class="demo-card-title">VP Sales Archetypes</div>
-                    <div class="demo-card-desc">Foundations</div>
-                </div>
-                <div class="demo-card" data-idx="2">
-                    <span class="badge">3</span>
-                    <div class="demo-card-title">The Science of Offers</div>
-                    <div class="demo-card-desc">Strategy document</div>
-                </div>
-                <div class="demo-card" data-idx="3">
-                    <span class="badge">4</span>
-                    <div class="demo-card-title">AI Agents Guide</div>
-                    <div class="demo-card-desc">Internal article</div>
-                </div>
+        <div class="demo-box" style="text-align: center; padding: 32px;">
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Want to navigate like a pro?</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <span class="kbd">/</span>
+                <span class="kbd">1-6</span>
+                <span class="kbd">↑↓</span>
+                <span class="kbd">↵</span>
+                <span class="kbd">esc</span>
             </div>
-            <p id="success3" style="color: var(--accent); font-size: 14px; margin-top: 12px; display: none;">
-                ✓ Great! You can navigate results with your keyboard.
-            </p>
         </div>
         
         <div class="action-row">
-            <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <a href="search.html" class="btn btn-secondary">Start Searching</a>
             <button class="btn btn-primary" onclick="nextStep()">
-                Next
+                Teach Me
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
             </button>
         </div>
     </div>
     
-    <!-- Step 4: Quick Numbers -->
+    <!-- Step 4: Shortcut - Slash to focus -->
     <div class="step" data-step="4">
-        <div class="step-number">Step 4 of 5</div>
-        <h1>Quick Open</h1>
-        <p class="subtitle">Open popular documents with a single keystroke</p>
+        <div class="step-number">Shortcut 1 of 5</div>
+        <h1>Instant Focus</h1>
+        <p class="subtitle">Jump to search from anywhere</p>
         
-        <div class="step-content">
-            <p>The 6 featured documents on the home page can be opened by pressing <span class="kbd">1</span> through <span class="kbd">6</span>. No searching required.</p>
+        <div class="key-hero">
+            <span class="kbd kbd-large">/</span>
+            <div class="key-description">Press forward slash to focus the search bar</div>
+            <div class="key-hint">Works from anywhere on the search page</div>
         </div>
         
         <div class="demo-box">
             <div class="try-it">Try it now</div>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Press any number key 1-6:</p>
-            <div class="demo-cards" id="demoCards2" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                <div class="demo-card" data-num="1">
-                    <span class="badge">1</span>
-                    <div class="demo-card-title">Demand Generation</div>
-                    <div class="demo-card-desc">Press 1 to open</div>
-                </div>
-                <div class="demo-card" data-num="2">
-                    <span class="badge">2</span>
-                    <div class="demo-card-title">VP Sales Archetypes</div>
-                    <div class="demo-card-desc">Press 2 to open</div>
-                </div>
-                <div class="demo-card" data-num="3">
-                    <span class="badge">3</span>
-                    <div class="demo-card-title">Offer Strategy</div>
-                    <div class="demo-card-desc">Press 3 to open</div>
-                </div>
-                <div class="demo-card" data-num="4">
-                    <span class="badge">4</span>
-                    <div class="demo-card-title">What Are AI Agents?</div>
-                    <div class="demo-card-desc">Press 4 to open</div>
-                </div>
-                <div class="demo-card" data-num="5">
-                    <span class="badge">5</span>
-                    <div class="demo-card-title">Chapter 1: The Number</div>
-                    <div class="demo-card-desc">Press 5 to open</div>
-                </div>
-                <div class="demo-card" data-num="6">
-                    <span class="badge">6</span>
-                    <div class="demo-card-title">Pipeline Forecast</div>
-                    <div class="demo-card-desc">Press 6 to open</div>
-                </div>
+            <div class="demo-search" id="demoSearch4">
+                <input type="text" placeholder="Press / to focus here..." id="demoInput4">
             </div>
-            <p id="success4" style="color: var(--accent); font-size: 14px; margin-top: 12px; display: none;">
-                ✓ Perfect! Number keys let you quick-open any featured document.
-            </p>
+            <p class="success-msg" id="success4">Nice! You focused without clicking.</p>
         </div>
         
         <div class="action-row">
             <button class="btn btn-secondary" onclick="prevStep()">Back</button>
             <button class="btn btn-primary" onclick="nextStep()">
-                Next
+                Next Shortcut
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
             </button>
         </div>
     </div>
     
-    <!-- Step 5: Completion -->
+    <!-- Step 5: Shortcut - Number keys -->
     <div class="step" data-step="5">
+        <div class="step-number">Shortcut 2 of 5</div>
+        <h1>Quick Open</h1>
+        <p class="subtitle">Open featured docs with one key</p>
+        
+        <div class="key-hero">
+            <div style="display: flex; gap: 8px;">
+                <span class="kbd kbd-large">1</span>
+                <span class="kbd kbd-large">2</span>
+                <span class="kbd kbd-large">3</span>
+            </div>
+            <div class="key-description">Press 1-6 to open featured documents</div>
+            <div class="key-hint">No searching required</div>
+        </div>
+        
+        <div class="demo-box">
+            <div class="try-it">Try it now</div>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Press any number 1-6:</p>
+            <div class="demo-cards" id="demoCards5" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="demo-card" data-num="1"><span class="badge">1</span><div class="demo-card-title">Demand</div></div>
+                <div class="demo-card" data-num="2"><span class="badge">2</span><div class="demo-card-title">Archetypes</div></div>
+                <div class="demo-card" data-num="3"><span class="badge">3</span><div class="demo-card-title">Offers</div></div>
+                <div class="demo-card" data-num="4"><span class="badge">4</span><div class="demo-card-title">AI Agents</div></div>
+                <div class="demo-card" data-num="5"><span class="badge">5</span><div class="demo-card-title">Chapter 1</div></div>
+                <div class="demo-card" data-num="6"><span class="badge">6</span><div class="demo-card-title">Forecast</div></div>
+            </div>
+            <p class="success-msg" id="success5">One keystroke to open any featured doc.</p>
+        </div>
+        
+        <div class="action-row">
+            <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <button class="btn btn-primary" onclick="nextStep()">
+                Next Shortcut
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 6: Shortcut - Arrow navigation -->
+    <div class="step" data-step="6">
+        <div class="step-number">Shortcut 3 of 5</div>
+        <h1>Navigate Results</h1>
+        <p class="subtitle">Move through results without a mouse</p>
+        
+        <div class="key-hero">
+            <div style="display: flex; gap: 8px;">
+                <span class="kbd kbd-large">↑</span>
+                <span class="kbd kbd-large">↓</span>
+            </div>
+            <div class="key-description">Arrow keys move through search results</div>
+            <div class="key-hint">Then press Enter to open</div>
+        </div>
+        
+        <div class="demo-box">
+            <div class="try-it">Try it now</div>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Press up/down arrows:</p>
+            <div class="demo-cards" id="demoCards6">
+                <div class="demo-card" data-idx="0"><span class="badge">1</span><div class="demo-card-title">Demand Generation</div></div>
+                <div class="demo-card" data-idx="1"><span class="badge">2</span><div class="demo-card-title">VP Sales Archetypes</div></div>
+                <div class="demo-card" data-idx="2"><span class="badge">3</span><div class="demo-card-title">Offer Strategy</div></div>
+                <div class="demo-card" data-idx="3"><span class="badge">4</span><div class="demo-card-title">AI Agents Guide</div></div>
+            </div>
+            <p class="success-msg" id="success6">Perfect. Navigate without touching your mouse.</p>
+        </div>
+        
+        <div class="action-row">
+            <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <button class="btn btn-primary" onclick="nextStep()">
+                Next Shortcut
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 7: Shortcut - Enter to open -->
+    <div class="step" data-step="7">
+        <div class="step-number">Shortcut 4 of 5</div>
+        <h1>Open Selection</h1>
+        <p class="subtitle">Open the highlighted result</p>
+        
+        <div class="key-hero">
+            <span class="kbd kbd-large">↵</span>
+            <div class="key-description">Press Enter to open the selected result</div>
+            <div class="key-hint">After navigating with arrows</div>
+        </div>
+        
+        <div class="demo-box" style="text-align: center; padding: 32px;">
+            <p style="color: var(--text-muted); font-size: 14px;">The flow:</p>
+            <div style="display: flex; gap: 12px; justify-content: center; align-items: center; margin-top: 16px; flex-wrap: wrap;">
+                <span class="kbd">/</span>
+                <span style="color: var(--text-muted);">→</span>
+                <span style="color: var(--text-muted);">type</span>
+                <span style="color: var(--text-muted);">→</span>
+                <span class="kbd">↓</span>
+                <span style="color: var(--text-muted);">→</span>
+                <span class="kbd">↵</span>
+            </div>
+            <p style="margin-top: 16px; color: var(--text-muted); font-size: 14px;">Focus → Search → Navigate → Open</p>
+        </div>
+        
+        <div class="action-row">
+            <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <button class="btn btn-primary" onclick="nextStep()">
+                Next Shortcut
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 8: Shortcut - Escape to clear -->
+    <div class="step" data-step="8">
+        <div class="step-number">Shortcut 5 of 5</div>
+        <h1>Clear & Reset</h1>
+        <p class="subtitle">Start over instantly</p>
+        
+        <div class="key-hero">
+            <span class="kbd kbd-large">esc</span>
+            <div class="key-description">Press Escape to clear your search</div>
+            <div class="key-hint">Returns you to the featured docs view</div>
+        </div>
+        
+        <div class="demo-box">
+            <div class="try-it">Try it now</div>
+            <div class="demo-search" id="demoSearch8">
+                <input type="text" value="some search text" id="demoInput8">
+            </div>
+            <p class="success-msg" id="success8">Clean slate. Ready for a new search.</p>
+        </div>
+        
+        <div class="action-row">
+            <button class="btn btn-secondary" onclick="prevStep()">Back</button>
+            <button class="btn btn-primary" onclick="nextStep()">
+                Finish
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 9: Complete -->
+    <div class="step" data-step="9">
         <div class="step-number">Complete</div>
         
         <div class="completion">
             <div class="completion-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             </div>
-            <h2>You're ready!</h2>
-            <p>You now know everything about Adrata Search.</p>
+            <h2>You're a power user now</h2>
+            <p>You've mastered Adrata Search.</p>
             
-            <ul class="tips-list">
-                <li>
-                    <span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4"/></svg></span>
-                    <div>
-                        <strong>Press <span class="kbd">/</span></strong> to focus search from anywhere
-                    </div>
-                </li>
-                <li>
-                    <span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg></span>
-                    <div>
-                        <strong>Use arrow keys</strong> to navigate results
-                    </div>
-                </li>
-                <li>
-                    <span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></span>
-                    <div>
-                        <strong>Press 1-6</strong> to quick-open featured documents
-                    </div>
-                </li>
-                <li>
-                    <span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
-                    <div>
-                        <strong>Press Escape</strong> to clear search and start over
-                    </div>
-                </li>
-            </ul>
+            <div class="demo-box" style="text-align: left; margin: 32px 0;">
+                <p style="font-weight: 600; margin-bottom: 16px;">Quick reference:</p>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 12px 16px; align-items: center;">
+                    <span class="kbd">/</span> <span style="color: var(--text-muted);">Focus search</span>
+                    <span class="kbd">1-6</span> <span style="color: var(--text-muted);">Open featured docs</span>
+                    <span class="kbd">↑↓</span> <span style="color: var(--text-muted);">Navigate results</span>
+                    <span class="kbd">↵</span> <span style="color: var(--text-muted);">Open selection</span>
+                    <span class="kbd">esc</span> <span style="color: var(--text-muted);">Clear search</span>
+                </div>
+            </div>
             
-            <a href="search.html" class="btn btn-primary" style="text-decoration: none;">
+            <a href="search.html" class="btn btn-primary">
                 Start Searching
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
             </a>
@@ -536,8 +603,19 @@
 
 <script>
 let currentStep = 1;
-const totalSteps = 5;
+const totalSteps = 9;
 let demoCardIndex = -1;
+
+function createProgressDots() {
+    const container = document.getElementById('progressDots');
+    container.innerHTML = '';
+    for (let i = 1; i <= totalSteps; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot' + (i === 1 ? ' active' : '');
+        dot.dataset.step = i;
+        container.appendChild(dot);
+    }
+}
 
 function updateProgress() {
     document.querySelectorAll('.progress-dot').forEach((dot, i) => {
@@ -549,8 +627,10 @@ function updateProgress() {
 
 function showStep(step) {
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+    const targetStep = document.querySelector(`.step[data-step="${step}"]`);
+    if (targetStep) targetStep.classList.add('active');
     updateProgress();
+    window.scrollTo(0, 0);
 }
 
 function nextStep() {
@@ -567,19 +647,46 @@ function prevStep() {
     }
 }
 
-// Step 2: Focus demo
+// Initialize
+createProgressDots();
+
+// Step 1: Basic typing
+document.getElementById('demoInput1')?.addEventListener('input', function() {
+    if (this.value.length > 0) {
+        document.getElementById('success1').classList.add('show');
+    }
+});
+
+// Step 2: Bundle search
+document.getElementById('demoInput2')?.addEventListener('input', function() {
+    if (this.value.toLowerCase().includes('context') || this.value.toLowerCase().includes('bundle')) {
+        document.getElementById('success2').classList.add('show');
+    }
+});
+
+// Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-    if (e.key === '/' && currentStep === 2) {
+    // Step 4: Slash to focus
+    if (e.key === '/' && currentStep === 4) {
         e.preventDefault();
-        document.getElementById('demoInput2').focus();
-        document.getElementById('demoSearch2').classList.add('focused');
-        document.getElementById('success2').style.display = 'block';
+        document.getElementById('demoInput4').focus();
+        document.getElementById('demoSearch4').classList.add('focused');
+        document.getElementById('success4').classList.add('show');
     }
     
-    // Step 3: Arrow navigation demo
-    if (currentStep === 3 && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+    // Step 5: Number keys
+    if (currentStep === 5 && e.key >= '1' && e.key <= '6') {
         e.preventDefault();
-        const cards = document.querySelectorAll('#demoCards .demo-card');
+        const cards = document.querySelectorAll('#demoCards5 .demo-card');
+        cards.forEach(c => c.classList.remove('selected'));
+        cards[parseInt(e.key) - 1].classList.add('selected');
+        document.getElementById('success5').classList.add('show');
+    }
+    
+    // Step 6: Arrow navigation
+    if (currentStep === 6 && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        e.preventDefault();
+        const cards = document.querySelectorAll('#demoCards6 .demo-card');
         cards.forEach(c => c.classList.remove('selected'));
         
         if (e.key === 'ArrowDown') {
@@ -589,16 +696,14 @@ document.addEventListener('keydown', (e) => {
         }
         
         cards[demoCardIndex].classList.add('selected');
-        document.getElementById('success3').style.display = 'block';
+        document.getElementById('success6').classList.add('show');
     }
     
-    // Step 4: Number key demo
-    if (currentStep === 4 && e.key >= '1' && e.key <= '6') {
+    // Step 8: Escape to clear
+    if (currentStep === 8 && e.key === 'Escape') {
         e.preventDefault();
-        const cards = document.querySelectorAll('#demoCards2 .demo-card');
-        cards.forEach(c => c.classList.remove('selected'));
-        cards[parseInt(e.key) - 1].classList.add('selected');
-        document.getElementById('success4').style.display = 'block';
+        document.getElementById('demoInput8').value = '';
+        document.getElementById('success8').classList.add('show');
     }
 });
 
@@ -609,4 +714,3 @@ document.documentElement.setAttribute('data-theme', theme);
 
 </body>
 </html>
-
