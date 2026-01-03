@@ -168,7 +168,7 @@ function initCopyMenu() {
                 
                 <a class="copy-option" href="#" onclick="openInClaude(event)">
                     <div class="option-icon brand-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.709 15.955l4.72-2.647.08-.08 2.726-1.529-2.646-1.449-.08-.08-4.8-2.647 2.566-1.449 4.8 2.647.08.08 2.726 1.529V7.603l.08-.08V2.726L14.41 4.175v4.797l-.08.08v2.727l2.647-1.449.08-.08 4.8-2.647 2.566 1.449-4.8 2.647-.08.08-2.726 1.529 2.646 1.449.08.08 4.8 2.647-2.566 1.449-4.8-2.647-.08-.08-2.726-1.529v2.727l-.08.08v4.797l-2.566-1.449v-4.797l.08-.08v-2.727l-2.647 1.449-.08.08-4.8 2.647-2.566-1.449z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.304 4.075l-3.398 11.927-2.242-5.167-5.167-2.242L18.424 5.19a1 1 0 0 0-1.12-1.115zM21.33 3.47a3 3 0 0 0-4.239-.799L4.164 9.073a1.5 1.5 0 0 0-.08 2.509l4.5 1.955 1.955 4.5a1.5 1.5 0 0 0 2.51-.08l6.4-12.926a3 3 0 0 0-.119-1.56z"/></svg>
                     </div>
                     <div class="option-content">
                         <div class="option-title">Open in Claude <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
@@ -178,7 +178,7 @@ function initCopyMenu() {
                 
                 <a class="copy-option" href="#" onclick="openInPerplexity(event)">
                     <div class="option-icon brand-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-4zm0 2.18l6 3v5.32c0 4.52-2.98 8.69-6 9.93-3.02-1.24-6-5.41-6-9.93V6.18l6-3zM12 6l-4 2v4.5c0 2.9 1.7 5.5 4 6.5 2.3-1 4-3.6 4-6.5V8l-4-2zm0 2l2 1v3.5c0 1.7-.9 3.2-2 3.9-1.1-.7-2-2.2-2-3.9V9l2-1z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                     </div>
                     <div class="option-content">
                         <div class="option-title">Open in Perplexity <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
@@ -186,15 +186,15 @@ function initCopyMenu() {
                     </div>
                 </a>
                 
-                <button class="copy-option" onclick="copyAsMarkdown()">
+                <a class="copy-option" href="#" onclick="viewAsMarkdown(event)">
                     <div class="option-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                     </div>
                     <div class="option-content">
-                        <div class="option-title">Copy as Markdown</div>
-                        <div class="option-desc">Copy page content for LLMs</div>
+                        <div class="option-title">View as Markdown <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></div>
+                        <div class="option-desc">Open raw markdown for this page</div>
                     </div>
-                </button>
+                </a>
             </div>
         </div>
     `;
@@ -418,9 +418,115 @@ function viewAsMarkdown(e) {
     e.preventDefault();
     const content = document.querySelector('#content') || document.body;
     const md = htmlToMarkdown(content);
+    const title = document.querySelector('h1')?.textContent || document.title;
     
-    // Open markdown in a new window/tab as plain text
-    const blob = new Blob([md], { type: 'text/plain' });
+    // Create a styled markdown viewer page
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - Markdown</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #fafafa;
+            --text-muted: #888;
+            --border: #333;
+            --accent: #e65100;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'MiSans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 48px;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .header h1 {
+            font-size: 20px;
+            color: var(--accent);
+        }
+        .header span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .copy-btn:hover { opacity: 0.9; }
+        pre {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        .toast.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>${title}</h1>
+            <span>Markdown export from Adrata Strategy</span>
+        </div>
+        <button class="copy-btn" onclick="copyMarkdown()">Copy Markdown</button>
+    </div>
+    <pre id="markdown-content"></pre>
+    <div class="toast" id="toast">Copied to clipboard!</div>
+    <script>
+        const markdown = ${JSON.stringify(md)};
+        document.getElementById('markdown-content').textContent = markdown;
+        
+        function copyMarkdown() {
+            navigator.clipboard.writeText(markdown).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+    </script>
+</body>
+</html>`;
+    
+    // Open in new tab
+    const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
     document.querySelector('.copy-menu')?.classList.remove('open');
