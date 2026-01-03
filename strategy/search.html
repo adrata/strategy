@@ -204,6 +204,23 @@
             color: #ff6d00 !important;
             -webkit-text-fill-color: #ff6d00 !important;
         }
+        .bundle-badge {
+            position: absolute;
+            top: -12px;
+            right: 16px;
+            background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: none;
+            z-index: 10;
+        }
+        .search-wrapper.bundle-active .bundle-badge {
+            display: block;
+        }
         .search-box::placeholder {
             color: var(--text-muted);
         }
@@ -508,6 +525,7 @@
     </div>
     
     <div class="search-wrapper" id="searchWrapper">
+        <span class="bundle-badge">CREATED BY ROSS</span>
         <input 
             type="text" 
             class="search-box" 
@@ -694,11 +712,14 @@ let debounceTimer;
 function checkForBundle(query) {
     const lowerQuery = query.toLowerCase().trim();
     const isBundle = bundleKeywords.some(keyword => lowerQuery.includes(keyword));
+    const wrapper = document.getElementById('searchWrapper');
     
     if (isBundle) {
         searchInput.classList.add('bundle-unlocked');
+        wrapper.classList.add('bundle-active');
     } else {
         searchInput.classList.remove('bundle-unlocked');
+        wrapper.classList.remove('bundle-active');
     }
 }
 
@@ -781,6 +802,7 @@ function clearSearch() {
     searchInput.value = '';
     clearBtn.classList.remove('visible');
     searchInput.classList.remove('bundle-unlocked');
+    document.getElementById('searchWrapper').classList.remove('bundle-active');
     showEmptyState();
     searchInput.focus();
 }
