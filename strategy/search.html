@@ -440,6 +440,16 @@
             padding: 3px 8px;
             border-radius: 4px;
         }
+        .result-date {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: auto;
+            font-weight: 400;
+            opacity: 0.7;
+        }
+        [data-theme="dark"] .result-date {
+            opacity: 0.5;
+        }
         .result-title {
             font-size: 18px;
             font-weight: 700;
@@ -620,73 +630,96 @@
 // Document index for search
 const documents = [
     // Foundations
-    { title: "VP Sales Archetypes", description: "Psychological profiles and targeting matrices for VP of Sales buyers. Performance trajectories, organizational dynamics, and messaging strategies.", category: "Foundations", path: "docs/foundations/archetypes.html", keywords: ["psychology", "buyer", "vp sales", "matrix", "targeting"] },
-    { title: "The 10 Archetypes", description: "Ranked personas with celebrity references, tech adoption language, and conversion strategies. For humans and AI agents.", category: "Foundations", path: "docs/foundations/archetypes-persona.html", keywords: ["personas", "archetypes", "celebrity", "ica", "language", "adoption", "context-bundle", "context bundle"] },
-    { title: "Buyer Group Archetypes", description: "Psychology profiles for every stakeholder in the enterprise buying committee. CFO, Legal, Procurement, IT, Peer VP approaches.", category: "Foundations", path: "docs/foundations/buyer-group-archetypes.html", keywords: ["buyer group", "cfo", "legal", "procurement", "psychology", "enterprise"] },
-    { title: "Greatest Salespeople in History", description: "Lessons from legendary salespeople throughout history. Patterns, techniques, and timeless principles that work.", category: "Foundations", path: "docs/foundations/greatest-salespeople.html", keywords: ["history", "sales", "legends", "techniques"] },
-    { title: "History of Sales Technology", description: "From rolodex to AI agents. The evolution of sales technology and what it means for the future.", category: "Foundations", path: "docs/foundations/history-of-sales-technology.html", keywords: ["history", "technology", "crm", "evolution"] },
+    { title: "VP Sales Archetypes", description: "Psychological profiles and targeting matrices for VP of Sales buyers. Performance trajectories, organizational dynamics, and messaging strategies.", category: "Foundations", path: "docs/foundations/archetypes.html", keywords: ["psychology", "buyer", "vp sales", "matrix", "targeting"], date: "2025-12-15" },
+    { title: "The 10 Archetypes", description: "Ranked personas with celebrity references, tech adoption language, and conversion strategies. For humans and AI agents.", category: "Foundations", path: "docs/foundations/archetypes-persona.html", keywords: ["personas", "archetypes", "celebrity", "ica", "language", "adoption", "context-bundle", "context bundle"], date: "2025-12-28" },
+    { title: "Buyer Group Archetypes", description: "Psychology profiles for every stakeholder in the enterprise buying committee. CFO, Legal, Procurement, IT, Peer VP approaches.", category: "Foundations", path: "docs/foundations/buyer-group-archetypes.html", keywords: ["buyer group", "cfo", "legal", "procurement", "psychology", "enterprise"], date: "2025-12-20" },
+    { title: "Greatest Salespeople in History", description: "Lessons from legendary salespeople throughout history. Patterns, techniques, and timeless principles that work.", category: "Foundations", path: "docs/foundations/greatest-salespeople.html", keywords: ["history", "sales", "legends", "techniques"], date: "2025-12-10" },
+    { title: "History of Sales Technology", description: "From rolodex to AI agents. The evolution of sales technology and what it means for the future.", category: "Foundations", path: "docs/foundations/history-of-sales-technology.html", keywords: ["history", "technology", "crm", "evolution"], date: "2025-12-10" },
     
     // Standards (for AI agents and humans)
-    { title: "Universal Standards", description: "Core standards for all Adrata content. Voice, archetypes, language calibration. Upload with any task.", category: "Standards", path: "docs/standards/universal-standards.html", keywords: ["standards", "voice", "tone", "style", "ai", "agent", "context-bundle", "context bundle"] },
-    { title: "Hook Standards", description: "How to write hooks that stop VPs at 6 AM. 5 patterns with archetype-specific examples.", category: "Standards", path: "docs/standards/hook-standards.html", keywords: ["hooks", "headlines", "attention", "writing", "context-bundle", "context bundle"] },
-    { title: "Offer Standards", description: "Creating offers that generate PULL. Earned trust, differentiation, archetype alignment.", category: "Standards", path: "docs/standards/offer-standards.html", keywords: ["offers", "pull", "trust", "lead magnet", "context-bundle", "context bundle"] },
-    { title: "Conversion Standards", description: "Website and landing page conversion benchmarks. CTAs by archetype, form design, LinkedIn outreach.", category: "Standards", path: "docs/standards/conversion-standards.html", keywords: ["conversion", "landing", "cta", "forms", "linkedin", "context-bundle", "context bundle"] },
-    { title: "HTML Design Standards", description: "Visual design system. MiSans font, color variables, spacing, components. CSS template for new docs.", category: "Standards", path: "docs/standards/html-design-standards.html", keywords: ["html", "css", "design", "template", "visual", "context-bundle", "context bundle"] },
+    { title: "Universal Standards", description: "Core standards for all Adrata content. Voice, archetypes, language calibration. Upload with any task.", category: "Standards", path: "docs/standards/universal-standards.html", keywords: ["standards", "voice", "tone", "style", "ai", "agent", "context-bundle", "context bundle"], date: "2026-01-02" },
+    { title: "Hook Standards", description: "How to write hooks that stop VPs at 6 AM. 5 patterns with archetype-specific examples.", category: "Standards", path: "docs/standards/hook-standards.html", keywords: ["hooks", "headlines", "attention", "writing", "context-bundle", "context bundle"], date: "2026-01-02" },
+    { title: "Offer Standards", description: "Creating offers that generate PULL. Earned trust, differentiation, archetype alignment.", category: "Standards", path: "docs/standards/offer-standards.html", keywords: ["offers", "pull", "trust", "lead magnet", "context-bundle", "context bundle"], date: "2026-01-02" },
+    { title: "Conversion Standards", description: "Website and landing page conversion benchmarks. CTAs by archetype, form design, LinkedIn outreach.", category: "Standards", path: "docs/standards/conversion-standards.html", keywords: ["conversion", "landing", "cta", "forms", "linkedin", "context-bundle", "context bundle"], date: "2026-01-02" },
+    { title: "HTML Design Standards", description: "Visual design system. MiSans font, color variables, spacing, components. CSS template for new docs.", category: "Standards", path: "docs/standards/html-design-standards.html", keywords: ["html", "css", "design", "template", "visual", "context-bundle", "context bundle"], date: "2026-01-02" },
     
     // Strategy
-    { title: "Website Conversion", description: "Complete conversion strategy for the Adrata website. Psychological triggers, offer structure, and funnel optimization.", category: "Strategy", path: "docs/strategy/conversion.html", keywords: ["conversion", "website", "funnel", "psychology"] },
-    { title: "Demand Generation", description: "Demand generation strategy and channels. How we create and capture demand at scale.", category: "Strategy", path: "docs/strategy/demand.html", keywords: ["demand", "generation", "marketing", "leads"] },
-    { title: "Offer Strategy", description: "The only question that matters: Can they do this themselves? 5 offers that create genuine PULL: 5 Accounts/48 Hours, Account Ambush, Deal Rescue, Rep Multiplier, Beat Your Competitor.", category: "Strategy", path: "docs/strategy/offers.html", keywords: ["offers", "value", "pull", "lead magnet", "5 accounts", "deal rescue", "buying committee"] },
-    { title: "Contagion Strategy", description: "Viral growth and contagion mechanics. How ideas and products spread through networks.", category: "Strategy", path: "docs/strategy/contagion.html", keywords: ["viral", "growth", "network", "spread"] },
-    { title: "Storytelling", description: "Strategic storytelling for sales and marketing. Narrative structures that persuade and convert.", category: "Strategy", path: "docs/strategy/storytelling.html", keywords: ["story", "narrative", "persuasion", "marketing"] },
-    { title: "Pains & Challenges", description: "Deep dive into buyer pains and challenges. Understanding what keeps VPs of Sales up at night.", category: "Strategy", path: "docs/strategy/pains-and-challenges.html", keywords: ["pain", "challenges", "problems", "buyer"] },
-    { title: "AI Capabilities", description: "Core AI capabilities and transformation potential. What becomes possible with AI-powered sales.", category: "Strategy", path: "docs/strategy/capabilities.html", keywords: ["ai", "capabilities", "transformation", "technology"] },
+    { title: "Website Conversion", description: "Complete conversion strategy for the Adrata website. Psychological triggers, offer structure, and funnel optimization.", category: "Strategy", path: "docs/strategy/conversion.html", keywords: ["conversion", "website", "funnel", "psychology"], date: "2025-12-18" },
+    { title: "Demand Generation", description: "Demand generation strategy and channels. How we create and capture demand at scale.", category: "Strategy", path: "docs/strategy/demand.html", keywords: ["demand", "generation", "marketing", "leads"], date: "2025-12-22" },
+    { title: "Offer Strategy", description: "The only question that matters: Can they do this themselves? 5 offers that create genuine PULL: 5 Accounts/48 Hours, Account Ambush, Deal Rescue, Rep Multiplier, Beat Your Competitor.", category: "Strategy", path: "docs/strategy/offers.html", keywords: ["offers", "value", "pull", "lead magnet", "5 accounts", "deal rescue", "buying committee"], date: "2026-01-03" },
+    { title: "Contagion Strategy", description: "Viral growth and contagion mechanics. How ideas and products spread through networks.", category: "Strategy", path: "docs/strategy/contagion.html", keywords: ["viral", "growth", "network", "spread"], date: "2025-12-12" },
+    { title: "Storytelling", description: "Strategic storytelling for sales and marketing. Narrative structures that persuade and convert.", category: "Strategy", path: "docs/strategy/storytelling.html", keywords: ["story", "narrative", "persuasion", "marketing"], date: "2025-12-14" },
+    { title: "Pains & Challenges", description: "Deep dive into buyer pains and challenges. Understanding what keeps VPs of Sales up at night.", category: "Strategy", path: "docs/strategy/pains-and-challenges.html", keywords: ["pain", "challenges", "problems", "buyer"], date: "2025-12-16" },
+    { title: "AI Capabilities", description: "Core AI capabilities and transformation potential. What becomes possible with AI-powered sales.", category: "Strategy", path: "docs/strategy/capabilities.html", keywords: ["ai", "capabilities", "transformation", "technology"], date: "2025-12-20" },
     
     // Playbooks
-    { title: "Sales Stages", description: "5-stage pipeline with psychology-driven gates. Offer → Strategy → Buyer Group → Close → Won. Includes Fast Pass for accelerated deals.", category: "Playbook", path: "docs/playbooks/sales-stages.html", keywords: ["pipeline", "stages", "gates", "close", "process"] },
-    { title: "Daily Sales Playbook", description: "Hour-by-hour playbook for maximum productivity. Outbound, follow-up, and meeting blocks.", category: "Playbook", path: "docs/playbooks/daily-sales-playbook.html", keywords: ["daily", "productivity", "schedule", "outbound"] },
-    { title: "Forecasting Policy", description: "How we talk about deals. Conviction levels (Bankable, Guaranteed, Average, Toss Up, Low), required data fields, and pipeline language.", category: "Playbook", path: "docs/playbooks/forecasting-policy.html", keywords: ["forecast", "pipeline", "conviction", "deal", "data", "policy"] },
-    { title: "Frameworks", description: "Essential sales frameworks. BANT, MEDDIC, SPIN, and modern variations for AI-era selling.", category: "Playbook", path: "docs/playbooks/frameworks.html", keywords: ["framework", "bant", "meddic", "spin", "qualification"] },
-    { title: "Operation: Destroy Dan's Calendar", description: "Demand generation goal-setting. Daily meeting capacities, pipeline stages, and weekly targets.", category: "Playbook", path: "docs/playbooks/operation-destroy-dans-calendar.html", keywords: ["meetings", "calendar", "targets", "demand"] },
-    { title: "LinkedIn Outbound", description: "Warm beats cold 10x. Daily activity stack, DM templates, content themes. 61% higher conversion with organic + paid vs paid alone.", category: "Playbook", path: "docs/playbooks/linkedin-outbound.html", keywords: ["linkedin", "outbound", "organic", "dm", "warm", "cold", "social", "content"] },
+    { title: "Sales Stages", description: "5-stage pipeline with psychology-driven gates. Offer → Strategy → Buyer Group → Close → Won. Includes Fast Pass for accelerated deals.", category: "Playbook", path: "docs/playbooks/sales-stages.html", keywords: ["pipeline", "stages", "gates", "close", "process"], date: "2025-12-26" },
+    { title: "Daily Sales Playbook", description: "Hour-by-hour playbook for maximum productivity. Outbound, follow-up, and meeting blocks.", category: "Playbook", path: "docs/playbooks/daily-sales-playbook.html", keywords: ["daily", "productivity", "schedule", "outbound"], date: "2025-12-24" },
+    { title: "Forecasting Policy", description: "How we talk about deals. Conviction levels (Bankable, Guaranteed, Average, Toss Up, Low), required data fields, and pipeline language.", category: "Playbook", path: "docs/playbooks/forecasting-policy.html", keywords: ["forecast", "pipeline", "conviction", "deal", "data", "policy"], date: "2026-01-02" },
+    { title: "Frameworks", description: "Essential sales frameworks. BANT, MEDDIC, SPIN, and modern variations for AI-era selling.", category: "Playbook", path: "docs/playbooks/frameworks.html", keywords: ["framework", "bant", "meddic", "spin", "qualification"], date: "2025-12-08" },
+    { title: "Operation: Destroy Dan's Calendar", description: "Demand generation goal-setting. Daily meeting capacities, pipeline stages, and weekly targets.", category: "Playbook", path: "docs/playbooks/operation-destroy-dans-calendar.html", keywords: ["meetings", "calendar", "targets", "demand"], date: "2025-12-30" },
+    { title: "LinkedIn Outbound", description: "Warm beats cold 10x. Daily activity stack, DM templates, content themes. 61% higher conversion with organic + paid vs paid alone.", category: "Playbook", path: "docs/playbooks/linkedin-outbound.html", keywords: ["linkedin", "outbound", "organic", "dm", "warm", "cold", "social", "content"], date: "2026-01-03" },
     
     // Internal Docs
-    { title: "H1 2026 Blitzscale", description: "Three-channel revenue strategy: LinkedIn Enterprise, Instagram Prosumer, Enterprise Cold Calling. Full cost model with $18M target.", category: "Internal", path: "docs/internal-docs/h1-2026-blitzscale.html", keywords: ["revenue", "linkedin", "instagram", "cold", "blitzscale", "2026"] },
-    { title: "Content Standards", description: "Voice, tone, style guide for all Adrata content. Hooks, stories, offers, archetypes. Reference for humans and AI agents.", category: "Internal", path: "docs/internal-docs/content-standards.html", keywords: ["voice", "tone", "style", "standards", "hooks", "stories", "offers", "archetypes", "writing"] },
-    { title: "Content Strategy", description: "Content creation strategy. Timely vs timeless, formats, distribution, and calendar.", category: "Internal", path: "docs/internal-docs/content-strategy.html", keywords: ["content", "calendar", "distribution", "marketing"] },
+    { title: "H1 2026 Blitzscale", description: "Three-channel revenue strategy: LinkedIn Enterprise, Instagram Prosumer, Enterprise Cold Calling. Full cost model with $18M target.", category: "Internal", path: "docs/internal-docs/h1-2026-blitzscale.html", keywords: ["revenue", "linkedin", "instagram", "cold", "blitzscale", "2026"], date: "2026-01-01" },
+    { title: "Content Standards", description: "Voice, tone, style guide for all Adrata content. Hooks, stories, offers, archetypes. Reference for humans and AI agents.", category: "Internal", path: "docs/internal-docs/content-standards.html", keywords: ["voice", "tone", "style", "standards", "hooks", "stories", "offers", "archetypes", "writing"], date: "2026-01-02" },
+    { title: "Content Strategy", description: "Content creation strategy. Timely vs timeless, formats, distribution, and calendar.", category: "Internal", path: "docs/internal-docs/content-strategy.html", keywords: ["content", "calendar", "distribution", "marketing"], date: "2025-12-19" },
     
     // AI Agents (Internal)
-    { title: "What Are AI Agents?", description: "A clear explanation of what AI agents are, how they work, and why they matter for sales teams. Foundations of agent technology.", category: "AI Agents", path: "docs/articles/internal/what-are-ai-agents.html", keywords: ["ai", "agents", "basics", "foundations", "introduction"] },
-    { title: "Build Your First AI Agent", description: "Step-by-step guide to building your first AI agent for sales. From concept to production in one day with code examples.", category: "AI Agents", path: "docs/articles/internal/build-your-first-ai-agent.html", keywords: ["ai", "agents", "build", "tutorial", "code", "first"] },
-    { title: "AI Agent Use Cases", description: "25 practical AI agent use cases for sales teams. Implementation complexity and ROI estimates for each.", category: "AI Agents", path: "docs/articles/internal/ai-agent-use-cases.html", keywords: ["ai", "agents", "use cases", "practical", "roi"] },
-    { title: "Autonomous Agents", description: "How to build autonomous AI agents that work independently, make decisions, and complete complex multi-step tasks.", category: "AI Agents", path: "docs/articles/internal/autonomous-agents.html", keywords: ["ai", "agents", "autonomous", "advanced", "self-driving"] },
-    { title: "AI Agents for Sales Leaders", description: "Comprehensive guide for VPs and CROs using AI agents. Strategic dashboards, forecasting, and executive automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-leaders.html", keywords: ["ai", "agents", "vp", "cro", "leadership"] },
-    { title: "AI Agents for Sales Managers", description: "AI agent guide for sales managers and directors. Team performance, coaching, and pipeline management.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-managers.html", keywords: ["ai", "agents", "manager", "director", "coaching"] },
-    { title: "AI Agents for SDRs", description: "AI agent playbook for SDRs and BDRs. Prospecting, outreach, and meeting booking automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sdrs.html", keywords: ["ai", "agents", "sdr", "bdr", "prospecting"] },
-    { title: "AI Agents for Account Executives", description: "AI agent guide for AEs. Deal progression, demo prep, and closing automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-account-executives.html", keywords: ["ai", "agents", "ae", "account executive", "closing"] },
-    { title: "AI Agents for RevOps", description: "AI agent capabilities for Revenue Operations. Data, process, and system automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-revops.html", keywords: ["ai", "agents", "revops", "operations", "data"] },
-    { title: "AI Agents for Sales Teams", description: "Team-wide AI agent strategy. Collaboration, handoffs, and collective intelligence.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-teams.html", keywords: ["ai", "agents", "team", "collaboration"] },
-    { title: "PULL is Everywhere", description: "The framework that explains why products take off. PULL applies in enterprise, consumer, hardware, and deep tech.", category: "Article", path: "docs/articles/internal/pull.html", keywords: ["pull", "framework", "enterprise", "consumer", "jtbd", "sales"] },
+    { title: "What Are AI Agents?", description: "A clear explanation of what AI agents are, how they work, and why they matter for sales teams. Foundations of agent technology.", category: "AI Agents", path: "docs/articles/internal/what-are-ai-agents.html", keywords: ["ai", "agents", "basics", "foundations", "introduction"], date: "2025-12-27" },
+    { title: "Build Your First AI Agent", description: "Step-by-step guide to building your first AI agent for sales. From concept to production in one day with code examples.", category: "AI Agents", path: "docs/articles/internal/build-your-first-ai-agent.html", keywords: ["ai", "agents", "build", "tutorial", "code", "first"], date: "2025-12-27" },
+    { title: "AI Agent Use Cases", description: "25 practical AI agent use cases for sales teams. Implementation complexity and ROI estimates for each.", category: "AI Agents", path: "docs/articles/internal/ai-agent-use-cases.html", keywords: ["ai", "agents", "use cases", "practical", "roi"], date: "2025-12-27" },
+    { title: "Autonomous Agents", description: "How to build autonomous AI agents that work independently, make decisions, and complete complex multi-step tasks.", category: "AI Agents", path: "docs/articles/internal/autonomous-agents.html", keywords: ["ai", "agents", "autonomous", "advanced", "self-driving"], date: "2025-12-27" },
+    { title: "AI Agents for Sales Leaders", description: "Comprehensive guide for VPs and CROs using AI agents. Strategic dashboards, forecasting, and executive automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-leaders.html", keywords: ["ai", "agents", "vp", "cro", "leadership"], date: "2025-12-28" },
+    { title: "AI Agents for Sales Managers", description: "AI agent guide for sales managers and directors. Team performance, coaching, and pipeline management.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-managers.html", keywords: ["ai", "agents", "manager", "director", "coaching"], date: "2025-12-28" },
+    { title: "AI Agents for SDRs", description: "AI agent playbook for SDRs and BDRs. Prospecting, outreach, and meeting booking automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sdrs.html", keywords: ["ai", "agents", "sdr", "bdr", "prospecting"], date: "2025-12-28" },
+    { title: "AI Agents for Account Executives", description: "AI agent guide for AEs. Deal progression, demo prep, and closing automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-account-executives.html", keywords: ["ai", "agents", "ae", "account executive", "closing"], date: "2025-12-28" },
+    { title: "AI Agents for RevOps", description: "AI agent capabilities for Revenue Operations. Data, process, and system automation.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-revops.html", keywords: ["ai", "agents", "revops", "operations", "data"], date: "2025-12-28" },
+    { title: "AI Agents for Sales Teams", description: "Team-wide AI agent strategy. Collaboration, handoffs, and collective intelligence.", category: "AI Agents", path: "docs/articles/internal/ai-agents-for-sales-teams.html", keywords: ["ai", "agents", "team", "collaboration"], date: "2025-12-28" },
+    { title: "PULL is Everywhere", description: "The framework that explains why products take off. PULL applies in enterprise, consumer, hardware, and deep tech.", category: "Article", path: "docs/articles/internal/pull.html", keywords: ["pull", "framework", "enterprise", "consumer", "jtbd", "sales"], date: "2025-12-29" },
     
     // External Articles
-    { title: "A Practical Guide to Building Agents", description: "OpenAI's comprehensive guide to building AI agents. Frameworks for use cases, agent design patterns, orchestration, and guardrails.", category: "Article", path: "docs/articles/external/practical-guide-to-agents.html", keywords: ["openai", "agents", "guide", "orchestration", "guardrails", "tools"] },
-    { title: "Building Effective Agents", description: "Anthropic's guide to building LLM agents. Workflows, patterns, and architectural decisions.", category: "Article", path: "docs/articles/external/building-effective-agents.html", keywords: ["anthropic", "llm", "agents", "architecture"] },
-    { title: "Long-Running Agents", description: "Anthropic's harness for agents that work across multiple context windows. Initializer and coding agents.", category: "Article", path: "docs/articles/external/long-running-agents.html", keywords: ["anthropic", "context", "long-running", "harness"] },
-    { title: "Competition Is for Losers", description: "Peter Thiel on monopoly, competition, and building valuable companies. From his Stanford lecture.", category: "Article", path: "docs/articles/external/competition-is-for-losers.html", keywords: ["thiel", "monopoly", "competition", "startup"] },
-    { title: "10X Revenue Club", description: "Bill Gurley on what makes revenue valuable. Moats, network effects, switching costs, and growth.", category: "Article", path: "docs/articles/external/10x-revenue-club.html", keywords: ["gurley", "revenue", "valuation", "moat", "network effects"] },
-    { title: "Push, Pull, and PULL", description: "Why business theory is stuck. From Taylor's Scientific Management to Toyota's Pull to Jobs to be Done. The physics of demand.", category: "Article", path: "docs/articles/external/push-pull-and-pull.html", keywords: ["pull", "push", "demand", "jtbd", "jobs to be done", "toyota", "lean"] },
-    { title: "Why Most Sales is Backwards", description: "The difference between Push, Pull, and PULL - and why understanding this changes everything about how we sell.", category: "Article", path: "docs/articles/internal/why-most-sales-is-backwards.html", keywords: ["pull", "push", "demand", "sales", "jtbd", "methodology"] },
+    { title: "A Practical Guide to Building Agents", description: "OpenAI's comprehensive guide to building AI agents. Frameworks for use cases, agent design patterns, orchestration, and guardrails.", category: "Article", path: "docs/articles/external/practical-guide-to-agents.html", keywords: ["openai", "agents", "guide", "orchestration", "guardrails", "tools"], date: "2025-12-25" },
+    { title: "Building Effective Agents", description: "Anthropic's guide to building LLM agents. Workflows, patterns, and architectural decisions.", category: "Article", path: "docs/articles/external/building-effective-agents.html", keywords: ["anthropic", "llm", "agents", "architecture"], date: "2025-12-20" },
+    { title: "Long-Running Agents", description: "Anthropic's harness for agents that work across multiple context windows. Initializer and coding agents.", category: "Article", path: "docs/articles/external/long-running-agents.html", keywords: ["anthropic", "context", "long-running", "harness"], date: "2025-12-20" },
+    { title: "Competition Is for Losers", description: "Peter Thiel on monopoly, competition, and building valuable companies. From his Stanford lecture.", category: "Article", path: "docs/articles/external/competition-is-for-losers.html", keywords: ["thiel", "monopoly", "competition", "startup"], date: "2025-12-05" },
+    { title: "10X Revenue Club", description: "Bill Gurley on what makes revenue valuable. Moats, network effects, switching costs, and growth.", category: "Article", path: "docs/articles/external/10x-revenue-club.html", keywords: ["gurley", "revenue", "valuation", "moat", "network effects"], date: "2025-12-05" },
+    { title: "Push, Pull, and PULL", description: "Why business theory is stuck. From Taylor's Scientific Management to Toyota's Pull to Jobs to be Done. The physics of demand.", category: "Article", path: "docs/articles/external/push-pull-and-pull.html", keywords: ["pull", "push", "demand", "jtbd", "jobs to be done", "toyota", "lean"], date: "2025-12-29" },
+    { title: "Why Most Sales is Backwards", description: "The difference between Push, Pull, and PULL - and why understanding this changes everything about how we sell.", category: "Article", path: "docs/articles/internal/why-most-sales-is-backwards.html", keywords: ["pull", "push", "demand", "sales", "jtbd", "methodology"], date: "2025-12-30" },
     
     // Talks
-    { title: "Urgency & Profits", description: "Video transcript on using urgency to increase profits. Proven strategies for long-term success.", category: "Talks", path: "docs/talks/urgency-profits.html", keywords: ["urgency", "profits", "video", "strategy"] },
-    { title: "Software Era of AI", description: "Discussion on AI's transformation of software. What changes and what stays the same.", category: "Talks", path: "docs/talks/software-era-of-ai.html", keywords: ["ai", "software", "transformation", "future"] },
+    { title: "Urgency & Profits", description: "Video transcript on using urgency to increase profits. Proven strategies for long-term success.", category: "Talks", path: "docs/talks/urgency-profits.html", keywords: ["urgency", "profits", "video", "strategy"], date: "2025-12-06" },
+    { title: "Software Era of AI", description: "Discussion on AI's transformation of software. What changes and what stays the same.", category: "Talks", path: "docs/talks/software-era-of-ai.html", keywords: ["ai", "software", "transformation", "future"], date: "2025-12-06" },
     
     // Book
-    { title: "Chapter 1: The Number", description: "Q4 Novel opening. A VP of Sales faces the impossible number. The pressure, the stakes, the mission.", category: "Book", path: "book/chapter-1-the-number.html", keywords: ["novel", "q4", "number", "story", "fiction"] },
+    { title: "Chapter 1: The Number", description: "Q4 Novel opening. A VP of Sales faces the impossible number. The pressure, the stakes, the mission.", category: "Book", path: "book/chapter-1-the-number.html", keywords: ["novel", "q4", "number", "story", "fiction"], date: "2025-12-01" },
     
     // Reports
-    { title: "Pipeline Forecast — Jan 2, 2026", description: "Active deals, weighted pipeline, and prospects. Navi Nurses, Cardinal Gray, Kiin Global, ITC Systems, Mantra Health.", category: "Report", path: "reports/forecast-2026-01-02.html", keywords: ["forecast", "pipeline", "deals", "revenue", "prospects"] },
+    { title: "Pipeline Forecast — Jan 2, 2026", description: "Active deals, weighted pipeline, and prospects. Navi Nurses, Cardinal Gray, Kiin Global, ITC Systems, Mantra Health.", category: "Report", path: "reports/forecast-2026-01-02.html", keywords: ["forecast", "pipeline", "deals", "revenue", "prospects"], date: "2026-01-02" },
 ];
+
+// Format date for display - show time if today, otherwise just date
+function formatDate(dateStr) {
+    const date = new Date(dateStr + 'T12:00:00');
+    const today = new Date();
+    const isToday = date.toDateString() === today.toDateString();
+    
+    if (isToday) {
+        // Show "Today" for items published today
+        return 'Today';
+    }
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+    
+    if (isYesterday) {
+        return 'Yesterday';
+    }
+    
+    // Show month and day (e.g., "Jan 2" or "Dec 28")
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 
 // Initialize Fuse.js
 const fuse = new Fuse(documents, {
@@ -785,6 +818,7 @@ function displayResults(results, query) {
             <a href="${doc.path}" class="result-card" data-index="${index}">
                 <div class="result-meta">
                     <span class="result-category">${doc.category}</span>
+                    ${doc.date ? `<span class="result-date">${formatDate(doc.date)}</span>` : ''}
                 </div>
                 <div class="result-title">${doc.title}</div>
                 <div class="result-description">${doc.description}</div>
